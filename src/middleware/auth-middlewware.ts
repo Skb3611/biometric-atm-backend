@@ -7,14 +7,15 @@ export async function authMiddleware(
   next: NextFunction
 ) {
   try {
-    const fingerprintId = req.headers.fingerprintid as string;
+    console.log(req.headers);
+    const fingerprintId = req.headers["fingerprintid"] as string;
     if (!fingerprintId) {
       return res.status(400).json({ error: "Fingerprint ID is required" });
     }
     const user = await prisma.user.findUnique({
       where: { fingerprintId },
     });
-    if (!user) {    
+    if (!user) {
       return res.status(401).json({ error: "Unauthorized" });
     }
     req.user = user;

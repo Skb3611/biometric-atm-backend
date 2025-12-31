@@ -3,7 +3,6 @@ import prisma from "../lib/prisma";
 import { Request, Response } from "express";
 const router = Router();
 router.get("/account-details", async (req: Request, res: Response) => {
-  console.log(req.user);
   const fingerprintId = req.user?.fingerprintId;
   const user = await prisma.user.findUnique({
     where: { fingerprintId },
@@ -11,7 +10,16 @@ router.get("/account-details", async (req: Request, res: Response) => {
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
-  return res.status(200).json({ message: "User found", user: user });
+  return res.status(200).json({
+    message: "User found",
+    user: {
+      id: user.id,
+      name: user.name,
+      accountNumber: user.accountNumber,
+      balance: user.balance,
+      fingerprintId: user.fingerprintId,
+    },
+  });
 });
 router.post("/account/withdraw", async (req, res) => {
   const { amt } = req.body;
