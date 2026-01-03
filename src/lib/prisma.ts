@@ -1,8 +1,9 @@
 // src/lib/prisma.ts
 
 import { PrismaClient } from "../generated/prisma/client";
-import dotenv from "dotenv"
-dotenv.config()
+import { PrismaPg } from "@prisma/adapter-pg";
+import dotenv from "dotenv";
+dotenv.config();
 
 // PrismaClient is attached to the `global` object in development to prevent
 // exhausting your database connection limit.
@@ -11,26 +12,20 @@ dotenv.config()
 // https://pris.ly/d/help/next-js-best-practices
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+export const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' 
-      ? ['query', 'error', 'warn'] 
-      : ['error'],
-  });
-
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
 
 // Graceful shutdown
-process.on('SIGINT', async () => {
+process.on("SIGINT", async () => {
   await prisma.$disconnect();
   process.exit(0);
 });
 
-process.on('SIGTERM', async () => {
+process.on("SIGTERM", async () => {
   await prisma.$disconnect();
   process.exit(0);
 });
@@ -47,10 +42,10 @@ export default prisma;
 export async function testConnection() {
   try {
     await prisma.$connect();
-    console.log('✅ Database connected successfully');
+    console.log("✅ Database connected successfully");
     return true;
   } catch (error) {
-    console.error('❌ Database connection failed:', error);
+    console.error("❌ Database connection failed:", error);
     return false;
   }
 }
@@ -60,7 +55,7 @@ export async function testConnection() {
  */
 export async function disconnect() {
   await prisma.$disconnect();
-  console.log('Database disconnected');
+  console.log("Database disconnected");
 }
 
 /**
@@ -69,8 +64,12 @@ export async function disconnect() {
 export async function healthCheck() {
   try {
     await prisma.$queryRaw`SELECT 1`;
-    return { status: 'healthy', timestamp: new Date() };
+    return { status: "healthy", timestamp: new Date() };
   } catch (error) {
-    return { status: 'unhealthy', error: (error as Error).message, timestamp: new Date() };
+    return {
+      status: "unhealthy",
+      error: (error as Error).message,
+      timestamp: new Date(),
+    };
   }
 }

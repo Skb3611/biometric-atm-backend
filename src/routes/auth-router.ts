@@ -8,16 +8,20 @@ router.post("/verify-fingerprint", async (req, res) => {
   }
   const user = await prisma.user.findUnique({
     where: { fingerprintId },
+    include: { accounts: true, transactions: true },
   });
   return user
-    ? res.status(200).json({ message: "Fingerprint verified", user:{
-      id:user.id,
-      name:user.name,
-      accountNumber:user.accountNumber,
-      balance:user.balance,
-      fingerprintId:user.fingerprintId,
-    } })
+    ? res.status(200).json({
+        message: "Fingerprint verified",
+        user: {
+          id: user.id,
+          name: user.name,
+          fingerprintId: user.fingerprintId,
+          accounts: user.accounts,
+          transactions: user.transactions,
+        },
+      })
     : res.status(404).json({ error: "User not found" });
 });
 
-export default router
+export default router;

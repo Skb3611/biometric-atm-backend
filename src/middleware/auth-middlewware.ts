@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { PrismaClient } from "../generated/prisma/client";
-const prisma = new PrismaClient();
+import prisma from "../lib/prisma";
 export async function authMiddleware(
   req: Request,
   res: Response,

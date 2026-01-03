@@ -11,34 +11,50 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
   id            Int           @id @default(autoincrement())
   name          String
-  accountNumber String        @unique
-  pin           String?
-  balance       Int           @default(0)
   fingerprintId String        @unique
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  accounts      Account[]
   transactions  Transaction[]
 }
 
 model Transaction {
-  id                Int      @id @default(autoincrement())
+  id                Int             @id @default(autoincrement())
   toAccountNumber   String
   fromAccountNumber String
   amount            Int
-  createdAt         DateTime @default(now())
+  createdAt         DateTime        @default(now())
   type              TransactionType
   userId            Int
-  user              User     @relation(fields: [userId], references: [id])
+  user              User            @relation(fields: [userId], references: [id])
 }
 
 enum TransactionType {
   transfer
   withdraw
   deposit
+}
+
+model Account {
+  id            Int      @id @default(autoincrement())
+  accountNumber String   @unique
+  pin           Int
+  balance       Int      @default(0)
+  bankName      BankName
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+enum BankName {
+SBI
+HDFC
+ICICI
+AXIS
 }
