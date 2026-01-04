@@ -18,20 +18,26 @@ async function main() {
   const users = await Promise.all([
     prisma.user.create({
       data: {
-        name: "Abhi",
-        fingerprintId: "fingerprint_abhi",
+        name: "Pranali bagul",
+        fingerprintId: "fingerprint_pranali",
       },
     }),
     prisma.user.create({
       data: {
-        name: "Rohan",
-        fingerprintId: "fingerprint_rohan",
+        name: "Harshada Panchal",
+        fingerprintId: "fingerprint_harshada",
       },
     }),
     prisma.user.create({
       data: {
-        name: "Jonny",
-        fingerprintId: "fingerprint_jonny",
+        name: "Gayatri Waghmare",
+        fingerprintId: "fingerprint_gayatri",
+      },
+    }),
+    prisma.user.create({
+      data: {
+        name: "Shubhangi Waghchaure",
+        fingerprintId: "fingerprint_shubhangi",
       },
     }),
   ]);
@@ -40,7 +46,7 @@ async function main() {
 
   // Create accounts for each user
   const accounts = await Promise.all([
-    // Abhi's accounts
+    // Pranali's accounts
     prisma.account.create({
       data: {
         accountNumber: "1001234567",
@@ -59,7 +65,7 @@ async function main() {
         userId: users[0].id,
       },
     }),
-    // Rohan's accounts
+    // Harshada's accounts
     prisma.account.create({
       data: {
         accountNumber: "1001234568",
@@ -78,7 +84,7 @@ async function main() {
         userId: users[1].id,
       },
     }),
-    // Jonny's accounts
+    // Gayatri's accounts
     prisma.account.create({
       data: {
         accountNumber: "1001234572",
@@ -88,13 +94,41 @@ async function main() {
         userId: users[2].id,
       },
     }),
+    prisma.account.create({
+      data: {
+        accountNumber: "1001234574",
+        pin: 9012,
+        balance: 35000,
+        bankName: BankName.HDFC,
+        userId: users[2].id,
+      },
+    }),
+    // Shubhangi's accounts
+    prisma.account.create({
+      data: {
+        accountNumber: "1001234573",
+        pin: 3456,
+        balance: 55000,
+        bankName: BankName.SBI,
+        userId: users[3].id,
+      },
+    }),
+    prisma.account.create({
+      data: {
+        accountNumber: "1001234575",
+        pin: 3456,
+        balance: 40000,
+        bankName: BankName.ICICI,
+        userId: users[3].id,
+      },
+    }),
   ]);
 
   console.log(`✅ Created ${accounts.length} accounts`);
 
   // Create transactions
   const transactions = await Promise.all([
-    // Abhi transfers to Rohan
+    // Pranali transfers to Harshada
     prisma.transaction.create({
       data: {
         fromAccountNumber: accounts[0].accountNumber,
@@ -104,7 +138,7 @@ async function main() {
         userId: users[0].id,
       },
     }),
-    // Rohan transfers to Jonny
+    // Harshada transfers to Gayatri
     prisma.transaction.create({
       data: {
         fromAccountNumber: accounts[2].accountNumber,
@@ -114,17 +148,17 @@ async function main() {
         userId: users[1].id,
       },
     }),
-    // Jonny transfers to Abhi
+    // Gayatri transfers to Shubhangi
     prisma.transaction.create({
       data: {
         fromAccountNumber: accounts[4].accountNumber,
-        toAccountNumber: accounts[0].accountNumber,
+        toAccountNumber: accounts[6].accountNumber,
         amount: 15000,
         type: TransactionType.transfer,
         userId: users[2].id,
       },
     }),
-    // Abhi deposits to his HDFC account
+    // Pranali deposits to her HDFC account
     prisma.transaction.create({
       data: {
         fromAccountNumber: "",
@@ -134,7 +168,7 @@ async function main() {
         userId: users[0].id,
       },
     }),
-    // Rohan withdraws from Axis account
+    // Harshada withdraws from Axis account
     prisma.transaction.create({
       data: {
         fromAccountNumber: accounts[3].accountNumber,
@@ -144,12 +178,22 @@ async function main() {
         userId: users[1].id,
       },
     }),
-    // Jonny deposits to Bank of America account
+    // Shubhangi deposits to Bank of America account
     prisma.transaction.create({
       data: {
         fromAccountNumber: "",
         toAccountNumber: accounts[0].accountNumber,
         amount: 25000,
+        type: TransactionType.deposit,
+        userId: users[3].id,
+      },
+    }),
+    // Gayatri deposits to her HDFC account
+    prisma.transaction.create({
+      data: {
+        fromAccountNumber: "",
+        toAccountNumber: accounts[5].accountNumber,
+        amount: 12000,
         type: TransactionType.deposit,
         userId: users[2].id,
       },

@@ -2,11 +2,27 @@
 
 Base URL: `http://localhost:8000`
 
+## User Credentials (For Testing)
+
+### Users & Fingerprint IDs
+| User Name | Fingerprint ID | PIN(s) | Account Numbers | Banks |
+|-----------|----------------|--------|------------------|-------|
+| **Pranali bagul** | `fingerprint_pranali` | 1234 | 1001234567, 1001234570 | SBI, HDFC |
+| **Harshada Panchal** | `fingerprint_harshada` | 5678 | 1001234568, 1001234571 | ICICI, AXIS |
+| **Gayatri Waghmare** | `fingerprint_gayatri` | 9012 | 1001234572, 1001234574 | AXIS, HDFC |
+| **Shubhangi Waghchaure** | `fingerprint_shubhangi` | 3456 | 1001234573, 1001234575 | SBI, ICICI |
+
+### Account Details
+- **Pranali**: SBI (₹50,000), HDFC (₹30,000)
+- **Harshada**: ICICI (₹75,000), AXIS (₹45,000)
+- **Gayatri**: AXIS (₹60,000), HDFC (₹35,000)
+- **Shubhangi**: SBI (₹55,000), ICICI (₹40,000)
+
 ## Authentication
 - Protected endpoints under `/dashboard` require the `fingerprintId` header.
 - The middleware validates the header and attaches the authenticated user to the request.
 - Example header:
-  - `fingerprintId: fingerprint_abhi`
+  - `fingerprintId: fingerprint_pranali`
 
 ## Health
 ### GET /health
@@ -26,7 +42,7 @@ curl -i http://localhost:8000/health
   - `Content-Type: application/json`
 - Request body:
 ```json
-{ "fingerprintId": "fingerprint_abhi" }
+{ "fingerprintId": "fingerprint_pranali" }
 ```
 - Responses:
   - `200 OK`
@@ -35,8 +51,8 @@ curl -i http://localhost:8000/health
       "message": "Fingerprint verified",
       "user": {
         "id": 1,
-        "name": "Abhi",
-        "fingerprintId": "fingerprint_abhi",
+        "name": "Pranali bagul",
+        "fingerprintId": "fingerprint_pranali",
         "accounts": [ /* Account[] */ ],
         "transactions": [ /* Transaction[] */ ]
       }
@@ -49,7 +65,7 @@ Example:
 ```bash
 curl -X POST http://localhost:8000/auth/verify-fingerprint \
   -H "Content-Type: application/json" \
-  -d '{ "fingerprintId": "fingerprint_abhi" }'
+  -d '{ "fingerprintId": "fingerprint_pranali" }'
 ```
 
 ## Dashboard (Protected)
@@ -66,8 +82,8 @@ Headers required:
       "message": "User found",
       "user": {
         "id": 1,
-        "name": "Abhi",
-        "fingerprintId": "fingerprint_abhi",
+        "name": "Pranali bagul",
+        "fingerprintId": "fingerprint_pranali",
         "accounts": [ /* Account[] */ ],
         "transactions": [ /* Transaction[] */ ]
       }
@@ -78,7 +94,7 @@ Headers required:
 Example:
 ```bash
 curl http://localhost:8000/dashboard/account-details \
-  -H "fingerprintId: fingerprint_abhi"
+  -H "fingerprintId: fingerprint_pranali"
 ```
 
 ### POST /dashboard/account/withdraw
@@ -101,7 +117,7 @@ curl http://localhost:8000/dashboard/account-details \
 Example:
 ```bash
 curl -X POST http://localhost:8000/dashboard/account/withdraw \
-  -H "fingerprintId: fingerprint_abhi" \
+  -H "fingerprintId: fingerprint_pranali" \
   -H "Content-Type: application/json" \
   -d '{ "amt": 5000, "bankName": "SBI", "pin": 1234 }'
 ```
@@ -127,7 +143,7 @@ curl -X POST http://localhost:8000/dashboard/account/withdraw \
 Example:
 ```bash
 curl -X POST http://localhost:8000/dashboard/account/deposit \
-  -H "fingerprintId: fingerprint_abhi" \
+  -H "fingerprintId: fingerprint_pranali" \
   -H "Content-Type: application/json" \
   -d '{ "amt": 20000, "bankName": "HDFC" }'
 ```
@@ -170,7 +186,7 @@ curl -X POST http://localhost:8000/dashboard/account/deposit \
 Example:
 ```bash
 curl -X POST http://localhost:8000/dashboard/account/transfer \
-  -H "fingerprintId: fingerprint_abhi" \
+  -H "fingerprintId: fingerprint_pranali" \
   -H "Content-Type: application/json" \
   -d '{ "senderAccountNO": "1001234567", "receiverAccountNO": "1001234568", "amt": 5000, "pin": 1234 }'
 ```
@@ -192,7 +208,7 @@ curl -X POST http://localhost:8000/dashboard/account/transfer \
 Example:
 ```bash
 curl http://localhost:8000/dashboard/account/statement/1001234567 \
-  -H "fingerprintId: fingerprint_abhi"
+  -H "fingerprintId: fingerprint_pranali"
 ```
 
 ## Data Models
